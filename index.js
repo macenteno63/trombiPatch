@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
+import readline from 'readline';
 
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
@@ -12,6 +13,22 @@ const userToNotShow = [
     "AlexW@yxr7j.onmicrosoft.com",
     "DiegoS@yxr7j.onmicrosoft.com",
     "GradyA@yxr7j.onmicrosoft.com",
+    "HenriettaM@yxr7j.onmicrosoft.com",
+    "IsaiahL@yxr7j.onmicrosoft.com",
+    "JohannaL@yxr7j.onmicrosoft.com",
+    "JoniS@yxr7j.onmicrosoft.com",
+    "LeeG@yxr7j.onmicrosoft.com",
+    "LidiaH@yxr7j.onmicrosoft.com",
+    "LynneR@yxr7j.onmicrosoft.com",
+    "MeganB@yxr7j.onmicrosoft.com",
+    "MiriamG@yxr7j.onmicrosoft.com",
+    "NestorW@yxr7j.onmicrosoft.com",
+    "PattiF@yxr7j.onmicrosoft.com",
+    "PradeepG@yxr7j.onmicrosoft.com",
+
+]
+const userToShow = [
+    "AdeleV@yxr7j.onmicrosoft.com",
 ]
 
 async function patchAdUser(headers, id, body) {
@@ -71,13 +88,37 @@ async function main(){
         'Authorization': 'Bearer ' + token
     };
     const body = {
-        [`extension_7ab43b13719b4cbbbfb83787a26e7952_${process.env.EXTENSION_NAME}`]: false
+        [`extension_7ab43b13719b4cbbbfb83787a26e7952_${process.env.EXTENSION_NAME}`]: true
     }
     console.log(JSON.stringify(body));
     const headers = new Headers(meta);
-    userToNotShow.forEach(async (user) => {
-        await patchAdUser(headers, user, body);
+
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+     });
+    rl.question("Tapez 1 pour afficher dans le trombinoscope les utilisateurs indiquer dans la variable userToShow, tapez 2 pour ne pas afficher les utilisateurs dans userToNotShow\n", function(input) {
+        switch (input) {
+            case "1":
+                userToShow.forEach(async (user) => {
+                    await patchAdUser(headers, user, body);
+                });
+                break;
+            case "2":
+                userToNotShow.forEach(async (user) => {
+                    await patchAdUser(headers, user, body);
+                });
+                break;
+            default:
+                console.log("Vous n'avez pas choisi une option valide");
+                break;
+        }
+        rl.close();
     });
+
+    // userToShow.forEach(async (user) => {
+    //     await patchAdUser(headers, user, body);
+    // });
 }
 
 main();
